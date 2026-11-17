@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Your Shopping Cart – {{ STORE_NAME }} Cafe{% endblock %}
+
+{% block content %}
+<div class="container py-5" id="cartPageContainer">
+  <div class="mb-4 pb-2 border-bottom d-flex align-items-center justify-content-between">
+    <div>
+      <h1 class="h2 fw-bold text-dark mb-1">Your Order Cart</h1>
+      <p class="text-muted small mb-0">Review your selected items before heading to checkout.</p>
+    </div>
+    {% if cart_summary.item_count > 0 %}
+    <form action="{{ url_for('cart.clear_cart') }}" method="POST" onsubmit="return confirm('Are you sure you want to clear your entire cart?');">
+      <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
+        <i class="bi bi-trash3 me-1"></i> Clear Cart
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  <!-- Cart Full Section -->
+  <div id="cartFullSection" class="{% if cart_summary.item_count == 0 %}d-none{% endif %}">
+    <!-- Free Delivery Alert Banner -->
+    <div class="mb-4">
+      {% if cart_summary.is_free_delivery %}
+      <div class="p-3 rounded-4 bg-success-subtle border border-success d-flex align-items-center gap-2 text-success fw-bold">
+        <i class="bi bi-patch-check-fill fs-5"></i>
+        <span>Congratulations! Your order qualifies for <strong>FREE Doorstep Delivery</strong>!</span>
+      </div>
+      {% else %}
+      <div class="p-3 rounded-4 bg-warning-subtle border border-warning d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="text-dark">
+          <i class="bi bi-truck text-success me-2 fs-5"></i>
+          Add <strong>₹{{ cart_summary.amount_to_free_delivery|int }}</strong> more to enjoy <strong>FREE Delivery</strong>! (Orders over ₹{{ cart_summary.free_delivery_threshold|int }})
+        </div>
+        <a href="{{ url_for('products.menu') }}" class="btn btn-sm btn-loozy-primary">Add More Items</a>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="row g-4">
+      <!-- Cart Items Table / List -->
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="table-responsive">
+            <table class="table cart-table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th scope="col" style="min-width: 240px;">Product</th>
+                  <th scope="col">Price</th>
+                  <th scope="col" class="text-center">Quantity</th>
+                  <th scope="col" class="text-end">Subtotal</th>
+                  <th scope="col" class="text-center" style="width: 50px;"></th>
+                </tr>
+              </thead>
+              <tbody id="cartTableBody">
+                {% for item in cart_summary.cart_items %}
+                <tr id="cart-row-{{ item.product_id }}" class="cart-item-row">
+                  <td>
+                    <div class="d-flex align-items-center gap-3">
+                      <img src="{{ item.image_url }}" alt="{{ item.name }}" class="rounded-3 shadow-sm" style="width: 65px; height: 65px; object-fit: cover;">
+                      <div>
+                        <a href="{{ url_for('products.product_detail', product_id=item.product_id) }}" class="fw-bold text-dark text-decoration-none">
+                          {{ item.name }}
+                        </a>
+                        <div class="small text-muted">{{ item.category_name }} • <span class="badge bg-light text-dark border">{{ item.dietary_type }}</span></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="fw-semibold text-secondary">
+                    ₹{{ item.price|int }}
+                  </td>
+                  <td class="text-center">
+                    <div class="quantity-control">
+                      <button type="button" class="quantity-btn cart-qty-ajax-btn" data-action="decrease" data-product-id="{{ item.product_id }}" title="Decrease quantity">-</button>
+                      <span id="qty-display-{{ item.product_id }}" class="quantity-input d-flex align-items-center justify-content-center">{{ item.quantity }}</span>
+                      <button type="button" class="quantity-btn cart-qty-ajax-btn" data-action="increase" data-product-id="{{ item.product_id }}" title="Increase quantity">+</button>
+                    </div>
+                  </td>
+                  <td class="text-end fw-bold text-dark" id="item-subtotal-{{ item.product_id }}">
+                    ₹{{ item.item_total|int }}
+                  </td>
+                  <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-link text-danger p-0 cart-remove-ajax-btn" data-product-id="{{ item.product_id }}" title="Remove item">
+                      <i class="bi bi-trash3 fs-5"></i>
+                    </button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-4">
+          <a href="{{ url_for('products.menu') }}" class="btn btn-loozy-outline">
+            <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+          </a>
+        </div>
+      </div>
+
+      <!-- Order Summary Card -->
+      <div class="col-lg-4">
+        <div class="order-summary-card">
+          <h4 class="fw-bold text-dark mb-3">Order Summary</h4>
+          
+          <div class="d-flex justify-content-between mb-2 text-secondary">
+            <span>Items (<span id="summaryItemCount">{{ cart_summary.item_count }}</span>)</span>
+            <span class="fw-semibold text-dark" id="summarySubtotal">₹{{ cart_summary.subtotal|int }}</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-2 text-secondary">
+            <span>GST / Taxes ({{ cart_summary.tax_rate_percent }}%)</span>
+            <span class="fw-semibold text-dark" id="summaryTax">₹{{ cart_summary.tax }}</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-3 text-secondary">
+            <span>Delivery Fee</span>
+            <span class="fw-semibold text-dark" id="summaryDelivery">
+              {% if cart_summary.delivery_fee == 0 %}
+                <span class="text-success fw-bold">FREE</span>
+              {% else %}
+                ₹{{ cart_summary.delivery_fee|int }}
+              {% endif %}
+            </span>
+          </div>
+
+          <hr class="my-3">
+
+          <div class="d-flex justify-content-between align-items-baseline mb-4">
+            <span class="fs-5 fw-bold text-dark">Total Amount</span>
+            <span class="fs-4 fw-bolder text-success brand-font" id="summaryGrandTotal">₹{{ cart_summary.grand_total }}</span>
+          </div>
+
+          <a href="{{ url_for('orders.checkout') }}" class="btn btn-loozy-primary w-100 py-3 fs-6 d-flex align-items-center justify-content-center gap-2">
+            <span>Proceed to Checkout</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
+
+          <div class="text-center mt-3 small text-muted">
+            <i class="bi bi-shield-lock-fill text-success me-1"></i> Safe & Contactless Ordering
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Empty State -->
+  <div id="cartEmptySection" class="text-center py-5 my-4 {% if cart_summary.item_count > 0 %}d-none{% endif %}">
+    <div class="category-icon-circle mx-auto mb-3" style="width: 90px; height: 90px; font-size: 2.5rem;">
+      <i class="bi bi-bag-x"></i>
+    </div>
+    <h3 class="fw-bold text-dark mb-2">Your Cart is Currently Empty</h3>
+    <p class="text-muted mx-auto mb-4" style="max-width: 460px;">
+      Looks like you haven't added any fresh juices, burgers, or shakes yet. Check out our menu and treat yourself!
+    </p>
+    <a href="{{ url_for('products.menu') }}" class="btn btn-loozy-primary px-4 py-3">
+      <i class="bi bi-grid-fill me-2"></i>Explore Full Menu
+    </a>
+  </div>
+</div>
+{% endblock %}

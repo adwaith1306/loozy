@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout – Place Your Order – {{ STORE_NAME }} Cafe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Page Header -->
+  <div class="mb-4 pb-2 border-bottom">
+    <h1 class="h2 fw-bold text-dark mb-1">Checkout & Delivery Details</h1>
+    <p class="text-muted small mb-0">Fill in your delivery address and contact details to complete your order.</p>
+  </div>
+
+  <form action="{{ url_for('orders.place_order') }}" method="POST" id="checkoutForm">
+    <div class="row g-4">
+      <!-- Left Column: Customer and Delivery Information -->
+      <div class="col-lg-7">
+        <!-- Contact & Delivery Info Card -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+          <h4 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+            <span class="badge bg-success rounded-circle" style="width: 28px; height: 28px; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center;">1</span>
+            <span>Customer & Delivery Details</span>
+          </h4>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="customer_name" class="form-label fw-semibold small text-secondary">Full Name *</label>
+              <input type="text" class="form-control rounded-3 py-2" id="customer_name" name="customer_name" value="{{ customer_name or (current_user.name if current_user.is_authenticated else '') }}" placeholder="e.g. Aarav Sharma" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="customer_phone" class="form-label fw-semibold small text-secondary">Phone Number *</label>
+              <input type="tel" class="form-control rounded-3 py-2" id="customer_phone" name="customer_phone" value="{{ customer_phone or (current_user.phone if current_user.is_authenticated else '') }}" placeholder="e.g. +91 98765 43210" required>
+            </div>
+
+            <div class="col-12">
+              <label for="customer_email" class="form-label fw-semibold small text-secondary">Email Address (for Receipt & Updates) *</label>
+              <input type="email" class="form-control rounded-3 py-2" id="customer_email" name="customer_email" value="{{ customer_email or (current_user.email if current_user.is_authenticated else '') }}" placeholder="e.g. aarav@example.com" required>
+            </div>
+
+            <div class="col-12">
+              <label for="delivery_address" class="form-label fw-semibold small text-secondary">Delivery Address *</label>
+              <textarea class="form-control rounded-3 py-2" id="delivery_address" name="delivery_address" rows="3" placeholder="Building/Flat number, Street name, Area, City, Pincode" required>{{ delivery_address or (current_user.address if current_user.is_authenticated else '') }}</textarea>
+            </div>
+
+            <div class="col-12">
+              <label for="order_notes" class="form-label fw-semibold small text-secondary">Special Kitchen Instructions / Delivery Notes (Optional)</label>
+              <textarea class="form-control rounded-3 py-2" id="order_notes" name="order_notes" rows="2" placeholder="e.g., Less spicy, no ice in juice, ring bell upon arrival">{{ order_notes or '' }}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Options Card -->
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h4 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+            <span class="badge bg-success rounded-circle" style="width: 28px; height: 28px; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center;">2</span>
+            <span>Payment Method</span>
+          </h4>
+
+          <div class="d-flex flex-column gap-3">
+            <!-- Option 1: Cash on Delivery -->
+            <label class="p-3 rounded-4 border d-flex align-items-center gap-3 cursor-pointer bg-light">
+              <input type="radio" name="payment_method" value="Cash on Delivery" class="form-check-input mt-0" checked>
+              <div class="d-flex align-items-center justify-content-between w-100">
+                <div>
+                  <div class="fw-bold text-dark"><i class="bi bi-cash-stack text-success me-2"></i>Cash on Delivery (COD)</div>
+                  <div class="small text-muted">Pay with cash or UPI directly to our delivery rider.</div>
+                </div>
+                <span class="badge bg-success-subtle text-success">Recommended</span>
+              </div>
+            </label>
+
+            <!-- Option 2: Pay at Counter -->
+            <label class="p-3 rounded-4 border d-flex align-items-center gap-3 cursor-pointer">
+              <input type="radio" name="payment_method" value="Pay at Counter" class="form-check-input mt-0">
+              <div>
+                <div class="fw-bold text-dark"><i class="bi bi-shop text-success me-2"></i>Pay at Cafe Counter (Pickup)</div>
+                <div class="small text-muted">Collect freshly prepared order directly from LOOZY Cafe counter.</div>
+              </div>
+            </label>
+
+            <!-- Option 3: UPI / Digital QR -->
+            <label class="p-3 rounded-4 border d-flex align-items-center gap-3 cursor-pointer">
+              <input type="radio" name="payment_method" value="UPI / Digital" class="form-check-input mt-0">
+              <div>
+                <div class="fw-bold text-dark"><i class="bi bi-qr-code-scan text-success me-2"></i>UPI QR / Instant Digital Payment</div>
+                <div class="small text-muted">Pay using Google Pay, PhonePe, Paytm, or BHIM QR code.</div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Order Summary Sidebar -->
+      <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 90px;">
+          <h4 class="fw-bold text-dark mb-3">Order Summary</h4>
+          
+          <!-- Items List Preview -->
+          <div class="mb-3 overflow-auto" style="max-height: 250px;">
+            {% for item in cart_summary.cart_items %}
+            <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+              <div class="d-flex align-items-center gap-2">
+                <img src="{{ item.image_url }}" alt="{{ item.name }}" class="rounded-2" style="width: 44px; height: 44px; object-fit: cover;">
+                <div>
+                  <div class="fw-bold small text-dark text-truncate" style="max-width: 170px;">{{ item.name }}</div>
+                  <div class="text-muted" style="font-size: 0.78rem;">Qty: {{ item.quantity }} × ₹{{ item.price|int }}</div>
+                </div>
+              </div>
+              <span class="fw-bold text-dark small">₹{{ item.item_total|int }}</span>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Price Calculations -->
+          <div class="d-flex justify-content-between mb-2 text-secondary small">
+            <span>Items Subtotal ({{ cart_summary.item_count }} items)</span>
+            <span class="fw-semibold text-dark">₹{{ cart_summary.subtotal }}</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-2 text-secondary small">
+            <span>GST / Taxes ({{ cart_summary.tax_rate_percent }}%)</span>
+            <span class="fw-semibold text-dark">₹{{ cart_summary.tax }}</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-3 text-secondary small">
+            <span>Delivery Fee</span>
+            <span class="fw-semibold">
+              {% if cart_summary.delivery_fee == 0 %}
+                <span class="text-success fw-bold">FREE</span>
+              {% else %}
+                ₹{{ cart_summary.delivery_fee|int }}
+              {% endif %}
+            </span>
+          </div>
+
+          <hr class="my-2">
+
+          <div class="d-flex justify-content-between align-items-baseline my-3">
+            <span class="fs-5 fw-bold text-dark">Grand Total</span>
+            <span class="fs-3 fw-bolder text-success brand-font">₹{{ cart_summary.grand_total }}</span>
+          </div>
+
+          <!-- Place Order Button -->
+          <button type="submit" class="btn btn-loozy-primary w-100 py-3 fs-5 fw-bold shadow">
+            <i class="bi bi-bag-check-fill me-2"></i>Place Order
+          </button>
+
+          <div class="d-flex align-items-center justify-content-center gap-2 mt-3 text-muted small">
+            <i class="bi bi-shield-check text-success fs-5"></i>
+            <span>No advance payment needed for Cash on Delivery</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

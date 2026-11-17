@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us & Location – {{ STORE_NAME }} Cafe{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="py-5" style="background: linear-gradient(135deg, #F4FAF5 0%, #E8F5E9 100%); border-bottom: 1px solid var(--loozy-border);">
+  <div class="container text-center py-4">
+    <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: var(--loozy-primary-light); color: var(--loozy-dark); font-size: 0.85rem;">
+      WE'D LOVE TO HEAR FROM YOU
+    </span>
+    <h1 class="display-5 fw-bold mt-2">Get in Touch with LOOZY</h1>
+    <p class="text-muted mx-auto fs-5" style="max-width: 600px;">
+      Have a question, feedback, catering inquiry, or just want to say hi? Drop us a note or drop by our cafe!
+    </p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5">
+    <!-- Left Column: Contact Form -->
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+        <h3 class="fw-bold text-dark mb-1">Send Us a Message</h3>
+        <p class="text-muted small mb-4">Our cafe manager will review your note and respond within a few hours.</p>
+
+        <form action="{{ url_for('main.contact') }}" method="POST">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="name" class="form-label fw-semibold small text-secondary">Your Name *</label>
+              <input type="text" class="form-control py-2" id="name" name="name" value="{{ name or (current_user.name if current_user.is_authenticated else '') }}" placeholder="Aarav Sharma" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="email" class="form-label fw-semibold small text-secondary">Email Address *</label>
+              <input type="email" class="form-control py-2" id="email" name="email" value="{{ email or (current_user.email if current_user.is_authenticated else '') }}" placeholder="aarav@example.com" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="phone" class="form-label fw-semibold small text-secondary">Phone Number (Optional)</label>
+              <input type="tel" class="form-control py-2" id="phone" name="phone" value="{{ phone or (current_user.phone if current_user.is_authenticated else '') }}" placeholder="+91 98765 43210">
+            </div>
+
+            <div class="col-md-6">
+              <label for="subject" class="form-label fw-semibold small text-secondary">Inquiry Type *</label>
+              <select class="form-select py-2" id="subject" name="subject" required>
+                <option value="General Feedback" {% if subject == 'General Feedback' %}selected{% endif %}>General Feedback & Compliment</option>
+                <option value="Order Support" {% if subject == 'Order Support' %}selected{% endif %}>Order Support / Delivery Question</option>
+                <option value="Event Catering" {% if subject == 'Event Catering' %}selected{% endif %}>Party & Event Catering</option>
+                <option value="Franchise & Partnership" {% if subject == 'Franchise & Partnership' %}selected{% endif %}>Franchise & Partnership</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label for="message" class="form-label fw-semibold small text-secondary">Your Message *</label>
+              <textarea class="form-control py-2" id="message" name="message" rows="5" placeholder="Tell us how we can help you or what you loved about our food..." required>{{ message or '' }}</textarea>
+            </div>
+
+            <div class="col-12 mt-3">
+              <button type="submit" class="btn btn-loozy-primary px-4 py-3 fw-bold">
+                <i class="bi bi-send-fill me-2"></i>Send Message
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Column: Info Cards & Map -->
+    <div class="col-lg-5">
+      <!-- Info Cards -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <h4 class="fw-bold text-dark mb-4">Cafe Information</h4>
+
+        <div class="d-flex align-items-start gap-3 mb-4">
+          <div class="category-icon-circle flex-shrink-0" style="width: 50px; height: 50px; font-size: 1.3rem;">
+            <i class="bi bi-geo-alt-fill"></i>
+          </div>
+          <div>
+            <div class="fw-bold text-dark">LOOZY Flagship Cafe</div>
+            <div class="text-secondary small leading-relaxed">
+                Chettakkandi, Kadavathur - Parakkadavu Rd, Parakkadavu, Chekkiad, Keralam 673509
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-start gap-3 mb-4">
+          <div class="category-icon-circle flex-shrink-0" style="width: 50px; height: 50px; font-size: 1.3rem;">
+            <i class="bi bi-telephone-fill"></i>
+          </div>
+          <div>
+            <div class="fw-bold text-dark">Call Us Directly</div>
+            <div class="text-secondary small">
+              +91 98765 43210 / +91 80 4123 9999
+            </div>
+            <div class="text-muted" style="font-size: 0.78rem;">Available during cafe operating hours</div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-start gap-3 mb-4">
+          <div class="category-icon-circle flex-shrink-0" style="width: 50px; height: 50px; font-size: 1.3rem;">
+            <i class="bi bi-envelope-fill"></i>
+          </div>
+          <div>
+            <div class="fw-bold text-dark">Email Inquiries</div>
+            <div class="text-secondary small">hello@loozycafe.com</div>
+            <div class="text-secondary small">catering@loozycafe.com</div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-start gap-3">
+          <div class="category-icon-circle flex-shrink-0" style="width: 50px; height: 50px; font-size: 1.3rem;">
+            <i class="bi bi-clock-fill"></i>
+          </div>
+          <div>
+            <div class="fw-bold text-dark">Cafe Timings</div>
+            <div class="text-secondary small">Monday – Sunday: 9:00 AM – 11:30 PM</div>
+            <div class="text-success small fw-semibold">Open all 7 days including holidays</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Google Maps Embed Placeholder -->
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+          <span class="fw-bold text-dark small"><i class="bi bi-map-fill text-success me-1"></i> Interactive Map</span>
+          <span class="badge bg-success-subtle text-success">Indiranagar 100ft Rd</span>
+        </div>
+        <div class="ratio ratio-16x9">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.986884074211!2d77.63842607484136!3d12.97268808734267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae16a77d242767%3A0x6b7724a8ff5eb2f3!2s100%20Feet%20Rd%2C%20Indiranagar%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

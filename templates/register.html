@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up – Create an Account – {{ STORE_NAME }} Cafe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+        <!-- Header -->
+        <div class="text-center mb-4">
+          <span class="loozy-logo-badge mb-2 mx-auto" style="width: 48px; height: 48px; font-size: 1.4rem;">
+            <i class="bi bi-cup-straw"></i>
+          </span>
+          <h2 class="fw-bold text-dark mb-1">Join the LOOZY Club</h2>
+          <p class="text-muted small">Create your account for express checkout, order tracking, and exclusive cafe offers</p>
+        </div>
+
+        <form action="{{ url_for('auth.register') }}" method="POST">
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="name" class="form-label fw-semibold small text-secondary">Full Name *</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                <input type="text" class="form-control border-start-0 py-2" id="name" name="name" value="{{ name or '' }}" placeholder="e.g. Aarav Sharma" required>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="email" class="form-label fw-semibold small text-secondary">Email Address *</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                <input type="email" class="form-control border-start-0 py-2" id="email" name="email" value="{{ email or '' }}" placeholder="name@example.com" required>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="phone" class="form-label fw-semibold small text-secondary">Phone Number</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                <input type="tel" class="form-control border-start-0 py-2" id="phone" name="phone" value="{{ phone or '' }}" placeholder="+91 98765 43210">
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="address" class="form-label fw-semibold small text-secondary">Default Delivery Address</label>
+              <textarea class="form-control py-2" id="address" name="address" rows="2" placeholder="Street, area, city, pincode">{{ address or '' }}</textarea>
+            </div>
+
+            <div class="col-md-6">
+              <label for="password" class="form-label fw-semibold small text-secondary">Password *</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                <input type="password" class="form-control border-start-0 py-2" id="password" name="password" placeholder="Min. 6 characters" required>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="confirm_password" class="form-label fw-semibold small text-secondary">Confirm Password *</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
+                <input type="password" class="form-control border-start-0 py-2" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required>
+              </div>
+            </div>
+
+            <div class="col-12 mt-4">
+              <button type="submit" class="btn btn-loozy-primary w-100 py-3 fs-6 fw-bold shadow">
+                <i class="bi bi-person-check-fill me-2"></i>Create Account
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div class="text-center mt-4 pt-3 border-top small text-secondary">
+          Already have an account? 
+          <a href="{{ url_for('auth.login') }}" class="text-success fw-bold">Sign In here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

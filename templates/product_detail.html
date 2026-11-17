@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} – {{ STORE_NAME }} Cafe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb small">
+      <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}" class="text-muted">Home</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('products.menu') }}" class="text-muted">Menu</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('products.menu', category=product.category.slug) }}" class="text-muted">{{ product.category.name }}</a></li>
+      <li class="breadcrumb-item active text-success fw-bold" aria-current="page">{{ product.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-5 align-items-center">
+    <!-- Product Image -->
+    <div class="col-lg-6">
+      <div class="position-relative overflow-hidden rounded-4 shadow-lg border" style="background-color: var(--loozy-primary-soft);">
+        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid w-100" style="max-height: 480px; object-fit: cover;">
+        <span class="product-badge-diet m-3">
+          <i class="bi bi-dot text-success fs-4 p-0"></i>{{ product.dietary_type }}
+        </span>
+        {% if product.is_bestseller %}
+        <span class="product-badge-bestseller m-3">
+          <i class="bi bi-award-fill me-1"></i>Bestseller
+        </span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Product Details -->
+    <div class="col-lg-6">
+      <div class="product-category-meta mb-2">
+        <a href="{{ url_for('products.menu', category=product.category.slug) }}" class="text-muted text-decoration-none">
+          <i class="bi {{ product.category.icon or 'bi-cup-hot' }} me-1 text-success"></i>{{ product.category.name }}
+        </a>
+      </div>
+
+      <h1 class="display-6 fw-bold text-dark mb-3">{{ product.name }}</h1>
+
+      <!-- Rating & Prep Time -->
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="d-flex align-items-center gap-1 text-warning">
+          <i class="bi bi-star-fill"></i>
+          <span class="fw-bold text-dark">{{ product.rating }}</span>
+          <span class="text-muted small">(4.9/5 from 120+ happy foodies)</span>
+        </div>
+        <div class="border-end h-75"></div>
+        <div class="small text-muted">
+          <i class="bi bi-clock-history me-1 text-success"></i>Prep Time: <strong>{{ product.prep_time }}</strong>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="d-flex align-items-baseline gap-2 mb-4">
+        <span class="display-5 fw-bolder text-success brand-font">₹{{ product.price|int }}</span>
+        <span class="text-muted small">Inclusive of all local taxes</span>
+      </div>
+
+      <!-- Description -->
+      <p class="fs-6 text-secondary mb-4 leading-relaxed">
+        {{ product.description }}
+      </p>
+
+      <!-- Key Highlights -->
+      <div class="row g-2 mb-4 text-secondary small">
+        <div class="col-6">
+          <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-2">
+            <i class="bi bi-check-circle-fill text-success"></i>
+            <span>Freshly made to order</span>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-2">
+            <i class="bi bi-shield-check text-success"></i>
+            <span>Sanitized kitchen prep</span>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-2">
+            <i class="bi bi-tree-fill text-success"></i>
+            <span>Eco-friendly packaging</span>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="p-2 rounded-3 bg-light border d-flex align-items-center gap-2">
+            <i class="bi bi-truck text-success"></i>
+            <span>Express doorstep delivery</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add to Cart Form -->
+      <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="POST" class="ajax-add-cart-form">
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <label class="fw-bold small text-muted text-uppercase">Quantity:</label>
+          <div class="quantity-control p-1">
+            <button type="button" class="quantity-btn" onclick="let input = document.getElementById('detailQty'); if(input.value > 1) input.value--;">-</button>
+            <input type="number" id="detailQty" name="quantity" class="quantity-input" value="1" min="1" max="20" readonly>
+            <button type="button" class="quantity-btn" onclick="let input = document.getElementById('detailQty'); input.value++;">+</button>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-3">
+          <button type="submit" class="btn btn-loozy-primary btn-lg px-4 flex-grow-1">
+            <i class="bi bi-cart-plus-fill me-2"></i>Add to Cart
+          </button>
+          <a href="{{ url_for('products.menu') }}" class="btn btn-loozy-outline btn-lg px-4">
+            <i class="bi bi-arrow-left me-1"></i>Back to Menu
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Related Products in Category -->
+  {% if related_products %}
+  <div class="mt-5 pt-5 border-top">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <h3 class="fw-bold text-dark mb-0">More From {{ product.category.name }}</h3>
+      <a href="{{ url_for('products.menu', category=product.category.slug) }}" class="btn btn-sm btn-loozy-outline">
+        View All <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+      {% for item in related_products %}
+      <div class="col">
+        <div class="product-card">
+          <div class="product-img-wrapper" style="height: 180px;">
+            <img src="{{ item.image_url }}" alt="{{ item.name }}" class="product-img" loading="lazy">
+          </div>
+          <div class="product-body p-3">
+            <a href="{{ url_for('products.product_detail', product_id=item.id) }}" class="text-decoration-none">
+              <h6 class="fw-bold text-dark mb-1 text-truncate">{{ item.name }}</h6>
+            </a>
+            <div class="d-flex align-items-center justify-content-between mt-3">
+              <span class="fw-bold text-success">₹{{ item.price|int }}</span>
+              <form action="{{ url_for('cart.add_to_cart', product_id=item.id) }}" method="POST" class="ajax-add-cart-form m-0">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn btn-sm btn-add-cart py-1 px-2">
+                  <i class="bi bi-cart-plus"></i> Add
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

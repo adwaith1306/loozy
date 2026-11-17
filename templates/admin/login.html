@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login – {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container py-5 my-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card border-0 shadow rounded-4 p-4 p-md-5 bg-white">
+        <div class="text-center mb-4">
+          <div class="bg-dark text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; background-color: var(--loozy-dark) !important;">
+            <i class="bi bi-shield-lock-fill fs-4"></i>
+          </div>
+          <h3 class="fw-bold text-dark mb-1">Admin Portal</h3>
+          <p class="text-muted small">Authorized personnel only</p>
+        </div>
+
+        <form action="{{ url_for('admin.login') }}" method="POST">
+          <div class="mb-3">
+            <label for="email" class="form-label fw-semibold small text-secondary">Admin Email</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+              <input type="email" class="form-control border-start-0 py-2" id="email" name="email" value="admin@loozy.com" required>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="password" class="form-label fw-semibold small text-secondary">Admin Password</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-key"></i></span>
+              <input type="password" class="form-control border-start-0 py-2" id="password" name="password" placeholder="admin123" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-loozy-primary w-100 py-3 fw-bold">
+            <i class="bi bi-unlock-fill me-2"></i>Access Admin Panel
+          </button>
+        </form>
+
+        <div class="p-3 rounded-3 bg-light border mt-4 small text-secondary">
+          <div class="fw-bold text-dark mb-1"><i class="bi bi-info-circle text-success me-1"></i> Pre-seeded Credentials:</div>
+          <div>Email: <code>admin@loozy.com</code></div>
+          <div>Password: <code>admin123</code></div>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="{{ url_for('main.index') }}" class="small text-muted text-decoration-none">
+            <i class="bi bi-arrow-left me-1"></i> Return to Cafe Front
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

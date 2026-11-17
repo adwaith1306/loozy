@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders – {{ STORE_NAME }} Cafe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="mb-4 pb-2 border-bottom d-flex align-items-center justify-content-between">
+    <div>
+      <h1 class="h2 fw-bold text-dark mb-1">My Orders History</h1>
+      <p class="text-muted small mb-0">Track all your past cafe treats and active deliveries.</p>
+    </div>
+    <a href="{{ url_for('products.menu') }}" class="btn btn-loozy-primary">
+      <i class="bi bi-cart-plus me-1"></i> New Order
+    </a>
+  </div>
+
+  {% if orders %}
+  <div class="row g-4">
+    {% for order in orders %}
+    <div class="col-12">
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 pb-3 border-bottom">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <span class="fw-bold text-dark fs-5">#{{ order.order_number }}</span>
+              <span class="badge {% if order.order_status == 'Completed' %}bg-success{% elif order.order_status == 'Cancelled' %}bg-danger{% else %}bg-warning text-dark{% endif %} px-3 py-1 rounded-pill">
+                {{ order.order_status }}
+              </span>
+            </div>
+            <div class="small text-muted">
+              Placed on {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }} • Payment: {{ order.payment_method }} ({{ order.payment_status }})
+            </div>
+          </div>
+          <div class="text-md-end">
+            <div class="fs-4 fw-bolder text-success brand-font">₹{{ order.total_amount }}</div>
+            <a href="{{ url_for('orders.order_confirmation', order_number=order.order_number) }}" class="btn btn-sm btn-loozy-light mt-1">
+              View Receipt <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="pt-3">
+          <div class="fw-semibold small text-muted text-uppercase mb-2">Items Ordered:</div>
+          <div class="d-flex flex-wrap gap-2">
+            {% for item in order.items %}
+            <span class="badge bg-light text-dark border p-2 rounded-3 fw-medium">
+              {{ item.product_name }} <span class="text-success fw-bold">× {{ item.quantity }}</span> (₹{{ item.item_subtotal|int }})
+            </span>
+            {% endfor %}
+          </div>
+          <div class="mt-3 small text-muted">
+            <i class="bi bi-geo-alt me-1 text-success"></i> Delivered to: {{ order.delivery_address }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5 my-4">
+    <div class="category-icon-circle mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+      <i class="bi bi-receipt"></i>
+    </div>
+    <h3 class="fw-bold text-dark mb-2">No Past Orders Yet</h3>
+    <p class="text-muted mx-auto mb-4" style="max-width: 440px;">
+      You haven't placed an order with LOOZY yet. What are you waiting for? Fresh juices and burgers are calling!
+    </p>
+    <a href="{{ url_for('products.menu') }}" class="btn btn-loozy-primary px-4 py-3">
+      <i class="bi bi-grid-fill me-2"></i>Explore Menu & Order Now
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

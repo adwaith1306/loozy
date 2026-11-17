@@ -1,0 +1,72 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Customer Inquiries{% endblock %}
+{% block header_title %}Customer Inquiries ({{ messages|length }}){% endblock %}
+{% block header_subtitle %}Messages, catering requests, and feedback submitted via the Contact form{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  {% for msg in messages %}
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 d-flex flex-column justify-content-between position-relative">
+      {% if not msg.is_read %}
+      <span class="position-absolute top-0 end-0 m-3 badge bg-success">NEW</span>
+      {% endif %}
+
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <div class="category-icon-circle m-0" style="width: 44px; height: 44px; font-size: 1.1rem;">
+            <i class="bi bi-person"></i>
+          </div>
+          <div>
+            <div class="fw-bold text-dark">{{ msg.name }}</div>
+            <div class="small text-muted">
+              <a href="mailto:{{ msg.email }}" class="text-secondary text-decoration-none">{{ msg.email }}</a>
+              {% if msg.phone %} • <a href="tel:{{ msg.phone }}" class="text-secondary text-decoration-none">{{ msg.phone }}</a>{% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-3 bg-light border my-3">
+          <div class="fw-bold small text-dark mb-1"><i class="bi bi-tag text-success me-1"></i> {{ msg.subject }}</div>
+          <p class="small text-secondary mb-0 leading-relaxed">{{ msg.message }}</p>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+        <span class="small text-muted">
+          <i class="bi bi-clock me-1"></i> {{ msg.created_at.strftime('%d %b %Y, %I:%M %p') }}
+        </span>
+
+        <div class="d-flex gap-2">
+          <!-- Toggle Read Form -->
+          <form action="{{ url_for('admin.toggle_message_read', message_id=msg.id) }}" method="POST">
+            <button type="submit" class="btn btn-sm {% if msg.is_read %}btn-outline-secondary{% else %}btn-outline-success{% endif %}" title="Toggle read/unread">
+              <i class="bi {% if msg.is_read %}bi-envelope-check{% else %}bi-envelope-open{% endif %} me-1"></i>
+              {{ 'Mark Unread' if msg.is_read else 'Mark Read' }}
+            </button>
+          </form>
+
+          <!-- Delete Message Form -->
+          <form action="{{ url_for('admin.delete_message', message_id=msg.id) }}" method="POST" onsubmit="return confirm('Delete this inquiry?');">
+            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12">
+    <div class="card border-0 shadow-sm rounded-4 p-5 bg-white text-center text-muted">
+      <div class="category-icon-circle mx-auto mb-3" style="width: 70px; height: 70px; font-size: 1.8rem;">
+        <i class="bi bi-chat-heart"></i>
+      </div>
+      <h5 class="fw-bold text-dark mb-1">No Messages Yet</h5>
+      <p class="small text-muted mb-0">Customer messages submitted from the Contact page will appear here.</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

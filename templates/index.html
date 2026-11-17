@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block title %}Fresh Taste, Happy Moments – Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-shape-1"></div>
+  <div class="hero-shape-2"></div>
+  
+  <div class="container position-relative">
+    <div class="row align-items-center g-5">
+      <!-- Left Hero Text -->
+      <div class="col-lg-6">
+        <div class="hero-tagline-badge animate__animated animate__fadeInDown">
+          <i class="bi bi-stars text-warning"></i> Fresh, Healthy & Irresistible
+        </div>
+        <h1 class="hero-title animate__animated animate__fadeInLeft">
+          Fresh Taste,<br>
+          <span>Happy Moments.</span>
+        </h1>
+        <p class="hero-subtitle animate__animated animate__fadeInLeft animate__delay-1s">
+          Welcome to <strong>LOOZY</strong> — where 100% natural cold-pressed juices meet heavenly thickshakes, artisan brioche burgers, sizzling wraps, and crunchy snacks. Freshly handcrafted for your daily smiles!
+        </p>
+        <div class="d-flex flex-wrap gap-3 animate__animated animate__fadeInUp animate__delay-1s">
+          <a href="{{ url_for('products.menu') }}" class="btn btn-loozy-primary px-4 py-3 fs-6">
+            <i class="bi bi-bag-check-fill me-2"></i>Order Now
+          </a>
+          <a href="#categoriesSection" class="btn btn-loozy-outline px-4 py-3 fs-6">
+            <i class="bi bi-grid-3x3-gap-fill me-2"></i>Explore Menu
+          </a>
+        </div>
+
+        <!-- Quick Stats Banner -->
+        <div class="d-flex gap-4 mt-4 pt-3 border-top border-success-subtle">
+          <div>
+            <div class="fs-4 fw-bolder text-success">100%</div>
+            <div class="small text-muted">Pure Fresh Fruits</div>
+          </div>
+          <div class="border-end"></div>
+          <div>
+            <div class="fs-4 fw-bolder text-success">30 Mins</div>
+            <div class="small text-muted">Express Delivery</div>
+          </div>
+          <div class="border-end"></div>
+          <div>
+            <div class="fs-4 fw-bolder text-success">4.9 ★</div>
+            <div class="small text-muted">15k+ Happy Customers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Hero Visual -->
+      <div class="col-lg-6 text-center">
+        <div class="hero-image-wrapper">
+          <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80" alt="LOOZY Cafe Gourmet Burger and Drinks" class="hero-main-img img-fluid">
+          
+          <!-- Floating Badge 1 -->
+          <div class="hero-floating-card hero-floating-card-1">
+            <div class="p-2 bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+              <i class="bi bi-cup-straw fs-5"></i>
+            </div>
+            <div class="text-start">
+              <div class="fw-bold small text-dark">Cold-Pressed Juices</div>
+              <div class="text-muted" style="font-size: 0.75rem;">No Sugar, No Preservatives</div>
+            </div>
+          </div>
+
+          <!-- Floating Badge 2 -->
+          <div class="hero-floating-card hero-floating-card-2">
+            <div class="p-2 bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+              <i class="bi bi-fire fs-5"></i>
+            </div>
+            <div class="text-start">
+              <div class="fw-bold small text-dark">Sizzling Gourmet Burgers</div>
+              <div class="text-success fw-bold" style="font-size: 0.75rem;">Starting from ₹160</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Menu Categories Section -->
+<section id="categoriesSection" class="py-5 bg-white">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: var(--loozy-primary-light); color: var(--loozy-dark); font-size: 0.85rem;">
+        OUR DELICIOUS SELECTION
+      </span>
+      <h2 class="display-6 fw-bold mt-2">Explore By Category</h2>
+      <p class="text-muted mx-auto" style="max-width: 580px;">
+        From hydrating fruit elixirs to hearty loaded burgers and savory snacks, discover what you're craving today.
+      </p>
+    </div>
+
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3 g-lg-4">
+      {% for cat in categories %}
+      <div class="col">
+        <a href="{{ url_for('products.menu', category=cat.slug) }}" class="category-card h-100">
+          <div class="category-icon-circle">
+            <i class="bi {{ cat.icon or 'bi-cup-hot' }}"></i>
+          </div>
+          <h6 class="fw-bold text-dark mb-1">{{ cat.name }}</h6>
+          <span class="small text-muted">{{ cat.products|length }} items</span>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="py-5" style="background-color: var(--loozy-body-bg);">
+  <div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
+      <div>
+        <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: var(--loozy-primary-light); color: var(--loozy-dark); font-size: 0.85rem;">
+          CHEF'S PICKS
+        </span>
+        <h2 class="display-6 fw-bold mt-2 mb-1">Featured Specialties</h2>
+        <p class="text-muted mb-0">Handpicked crowd favorites that define the LOOZY experience.</p>
+      </div>
+      <a href="{{ url_for('products.menu') }}" class="btn btn-loozy-outline mt-3 mt-md-0">
+        View Entire Menu <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {% for product in featured_products %}
+      <div class="col">
+        <div class="product-card">
+          <div class="product-img-wrapper">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy">
+            <span class="product-badge-diet">
+              <i class="bi bi-dot text-success fs-5 p-0"></i>{{ product.dietary_type }}
+            </span>
+            {% if product.is_bestseller %}
+            <span class="product-badge-bestseller">
+              <i class="bi bi-award-fill me-1"></i>Bestseller
+            </span>
+            {% endif %}
+          </div>
+          <div class="product-body">
+            <div class="product-category-meta">{{ product.category.name }} • <i class="bi bi-clock me-1"></i>{{ product.prep_time }}</div>
+            <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="text-decoration-none">
+              <h5 class="product-title">{{ product.name }}</h5>
+            </a>
+            <p class="product-desc">{{ product.description }}</p>
+            
+            <div class="product-footer">
+              <div class="product-price">₹{{ product.price|int }}</div>
+              <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="POST" class="ajax-add-cart-form m-0">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn btn-add-cart">
+                  <i class="bi bi-cart-plus fs-6"></i> Add
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Special Offers / Promo Banner -->
+<section class="py-5 bg-white">
+  <div class="container py-3">
+    <div class="text-center mb-5">
+      <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: var(--loozy-primary-light); color: var(--loozy-dark); font-size: 0.85rem;">
+        LIMITED TIME OFFERS
+      </span>
+      <h2 class="display-6 fw-bold mt-2">Special Cafe Deals</h2>
+      <p class="text-muted">Tasty treats with extra happiness. Use these voucher codes at checkout or store counter!</p>
+    </div>
+
+    <div class="row g-4">
+      {% for offer in special_offers %}
+      <div class="col-md-6">
+        <div class="offer-card shadow-sm h-100 d-flex flex-column justify-content-between">
+          <div>
+            <span class="offer-badge">{{ offer.badge }}</span>
+            <h3 class="fw-bold text-success mb-1">{{ offer.title }}</h3>
+            <h5 class="text-dark fw-semibold mb-2">{{ offer.subtitle }}</h5>
+            <p class="text-muted mb-3">{{ offer.description }}</p>
+          </div>
+          <div class="d-flex align-items-center justify-content-between pt-3 border-top border-success-subtle">
+            <div>
+              <span class="small text-muted d-block">PROMO CODE</span>
+              <span class="offer-code">{{ offer.code }}</span>
+            </div>
+            <a href="{{ url_for('products.menu') }}" class="btn btn-loozy-primary py-2 px-3 small">
+              Claim Now <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Best Sellers Section -->
+<section class="py-5" style="background-color: var(--loozy-body-bg);">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: var(--loozy-primary-light); color: var(--loozy-dark); font-size: 0.85rem;">
+        MOST LOVED
+      </span>
+      <h2 class="display-6 fw-bold mt-2">Customer All-Time Favorites</h2>
+      <p class="text-muted mx-auto" style="max-width: 550px;">
+        Dishes that our regulars order again and again. Tried, tested, and universally adored!
+      </p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {% for product in bestsellers %}
+      <div class="col">
+        <div class="product-card">
+          <div class="product-img-wrapper">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy">
+            <span class="product-badge-diet">
+              <i class="bi bi-star-fill text-warning me-1"></i>{{ product.rating }} ★
+            </span>
+            <span class="product-badge-bestseller">
+              <i class="bi bi-fire me-1"></i>Trending
+            </span>
+          </div>
+          <div class="product-body">
+            <div class="product-category-meta">{{ product.category.name }} • {{ product.dietary_type }}</div>
+            <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="text-decoration-none">
+              <h5 class="product-title">{{ product.name }}</h5>
+            </a>
+            <p class="product-desc">{{ product.description }}</p>
+            
+            <div class="product-footer">
+              <div class="product-price">₹{{ product.price|int }}</div>
+              <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="POST" class="ajax-add-cart-form m-0">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn btn-add-cart">
+                  <i class="bi bi-cart-plus fs-6"></i> Add
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Why Choose LOOZY / Feature Pillars -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container py-4">
+    <div class="row g-4 text-center">
+      <div class="col-md-3 col-6">
+        <div class="p-3">
+          <div class="category-icon-circle mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+            <i class="bi bi-flower1"></i>
+          </div>
+          <h5 class="fw-bold mb-2">100% Pure Fruit</h5>
+          <p class="small text-muted mb-0">Cold-pressed daily with no artificial flavors or synthetic syrups.</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="p-3">
+          <div class="category-icon-circle mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+            <i class="bi bi-egg-fried"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Gourmet Recipes</h5>
+          <p class="small text-muted mb-0">Artisan brioche buns, house-made herb mayo, and secret spice blends.</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="p-3">
+          <div class="category-icon-circle mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+            <i class="bi bi-stopwatch"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Quick 30-Min Service</h5>
+          <p class="small text-muted mb-0">Sizzling hot food delivered to your door in eco-friendly packaging.</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="p-3">
+          <div class="category-icon-circle mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Pristine Hygiene</h5>
+          <p class="small text-muted mb-0">Hospital-grade sanitized kitchens and contactless delivery options.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Customer Testimonials Section -->
+<section class="py-5" style="background-color: var(--loozy-body-bg);">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: var(--loozy-primary-light); color: var(--loozy-dark); font-size: 0.85rem;">
+        LOVED BY FOOD LOVERS
+      </span>
+      <h2 class="display-6 fw-bold mt-2">What Our Customers Say</h2>
+      <p class="text-muted">Real stories from regular visitors who make LOOZY their daily favorite spot.</p>
+    </div>
+
+    <div class="row g-4">
+      {% for test in testimonials %}
+      <div class="col-lg-4 col-md-6">
+        <div class="testimonial-card">
+          <div class="star-rating mb-3">
+            {% for i in range(test.rating) %}
+            <i class="bi bi-star-fill"></i>
+            {% endfor %}
+          </div>
+          <p class="text-secondary mb-4 flex-grow-1" style="line-height: 1.6; font-style: italic;">
+            "{{ test.comment }}"
+          </p>
+          <div class="d-flex align-items-center gap-3 pt-3 border-top">
+            <img src="{{ test.avatar }}" alt="{{ test.name }}" class="testimonial-avatar">
+            <div>
+              <h6 class="fw-bold text-dark mb-0">{{ test.name }}</h6>
+              <span class="small text-muted">{{ test.role }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Pre-Footer CTA Banner -->
+<section class="py-5" style="background: linear-gradient(135deg, var(--loozy-primary-light) 0%, var(--loozy-primary) 100%);">
+  <div class="container py-3">
+    <div class="row align-items-center justify-content-between">
+      <div class="col-lg-8 text-center text-lg-start mb-4 mb-lg-0">
+        <h2 class="fw-bold text-dark mb-2">Hungry? Treat Yourself to Freshness Today!</h2>
+        <p class="text-dark mb-0 fs-5 opacity-75">Order your favorite juices, shakes, and burgers right now and enjoy fast doorstep delivery.</p>
+      </div>
+      <div class="col-lg-4 text-center text-lg-end">
+        <a href="{{ url_for('products.menu') }}" class="btn btn-loozy-primary btn-lg px-4 py-3 shadow">
+          <i class="bi bi-cart-fill me-2"></i>Start Your Order
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

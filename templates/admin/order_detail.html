@@ -1,0 +1,146 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Order #{{ order.order_number }}{% endblock %}
+{% block header_title %}Order Invoice #{{ order.order_number }}{% endblock %}
+{% block header_subtitle %}Placed on {{ order.created_at.strftime('%d %B %Y at %I:%M %p') }}{% endblock %}
+
+{% block header_actions %}
+<button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
+  <i class="bi bi-printer me-1"></i> Print Invoice
+</button>
+<a href="{{ url_for('admin.orders') }}" class="btn btn-loozy-outline btn-sm">
+  <i class="bi bi-arrow-left me-1"></i> Back to Orders
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <!-- Left Column: Order Items & Financials -->
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+      <h5 class="fw-bold text-dark mb-3">Itemized Bill</h5>
+
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead class="table-light small">
+            <tr>
+              <th>Dish / Drink</th>
+              <th class="text-center">Rate</th>
+              <th class="text-center">Quantity</th>
+              <th class="text-end">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items %}
+            <tr>
+              <td>
+                <div class="fw-bold text-dark">{{ item.product_name }}</div>
+                {% if item.product and item.product.category %}
+                <div class="small text-muted">{{ item.product.category.name }}</div>
+                {% endif %}
+              </td>
+              <td class="text-center text-secondary">₹{{ item.product_price|int }}</td>
+              <td class="text-center fw-bold">{{ item.quantity }}</td>
+              <td class="text-end fw-bold text-dark">₹{{ item.item_subtotal|int }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="text-end text-secondary pt-3">Subtotal:</td>
+              <td class="text-end pt-3 fw-semibold">₹{{ order.subtotal }}</td>
+            </tr>
+            <tr>
+              <td colspan="3" class="text-end text-secondary">GST (5%):</td>
+              <td class="text-end fw-semibold">₹{{ order.tax }}</td>
+            </tr>
+            <tr>
+              <td colspan="3" class="text-end text-secondary">Delivery Fee:</td>
+              <td class="text-end fw-semibold">
+                {% if order.delivery_fee == 0 %}
+                  <span class="text-success fw-bold">FREE</span>
+                {% else %}
+                  ₹{{ order.delivery_fee|int }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr class="border-top">
+              <td colspan="3" class="text-end fs-5 fw-bold text-dark pt-3">Final Amount:</td>
+              <td class="text-end fs-4 fw-bolder text-success brand-font pt-3">₹{{ order.total_amount }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: Status Update & Customer Information -->
+  <div class="col-lg-4">
+    <!-- Status Update Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+      <h5 class="fw-bold text-dark mb-3">Update Order Status</h5>
+      
+      <form action="{{ url_for('admin.update_order_status', order_id=order.id) }}" method="POST">
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-secondary">Kitchen Status</label>
+          <select name="order_status" class="form-select py-2">
+            <option value="Pending" {% if order.order_status == 'Pending' %}selected{% endif %}>Pending</option>
+            <option value="Confirmed" {% if order.order_status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+            <option value="Preparing" {% if order.order_status == 'Preparing' %}selected{% endif %}>Preparing</option>
+            <option value="Ready" {% if order.order_status == 'Ready' %}selected{% endif %}>Ready for Delivery / Pickup</option>
+            <option value="Completed" {% if order.order_status == 'Completed' %}selected{% endif %}>Completed / Delivered</option>
+            <option value="Cancelled" {% if order.order_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label small fw-semibold text-secondary">Payment Status</label>
+          <select name="payment_status" class="form-select py-2">
+            <option value="Pending" {% if order.payment_status == 'Pending' %}selected{% endif %}>Pending</option>
+            <option value="Paid" {% if order.payment_status == 'Paid' %}selected{% endif %}>Paid</option>
+            <option value="Failed" {% if order.payment_status == 'Failed' %}selected{% endif %}>Failed</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-loozy-primary w-100 py-2">
+          <i class="bi bi-arrow-repeat me-1"></i> Update Status
+        </button>
+      </form>
+    </div>
+
+    <!-- Customer Information Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+      <h5 class="fw-bold text-dark mb-3">Customer Information</h5>
+
+      <div class="mb-3 pb-2 border-bottom">
+        <div class="text-muted small text-uppercase">Full Name</div>
+        <div class="fw-bold text-dark">{{ order.customer_name }}</div>
+      </div>
+
+      <div class="mb-3 pb-2 border-bottom">
+        <div class="text-muted small text-uppercase">Phone Number</div>
+        <div class="fw-bold text-dark">
+          <a href="tel:{{ order.customer_phone }}" class="text-decoration-none text-dark">{{ order.customer_phone }}</a>
+        </div>
+      </div>
+
+      <div class="mb-3 pb-2 border-bottom">
+        <div class="text-muted small text-uppercase">Email Address</div>
+        <div class="text-secondary small">{{ order.customer_email }}</div>
+      </div>
+
+      <div class="mb-3 pb-2 border-bottom">
+        <div class="text-muted small text-uppercase">Delivery Address</div>
+        <div class="text-secondary small leading-relaxed">{{ order.delivery_address }}</div>
+      </div>
+
+      {% if order.order_notes %}
+      <div>
+        <div class="text-muted small text-uppercase">Special Notes</div>
+        <div class="text-dark small fst-italic">"{{ order.order_notes }}"</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Manage Customer Orders{% endblock %}
+{% block header_title %}Customer Orders ({{ orders|length }}){% endblock %}
+{% block header_subtitle %}Track, update, and fulfill incoming orders across the cafe{% endblock %}
+
+{% block content %}
+<!-- Filter Tabs & Search Bar -->
+<div class="card border-0 shadow-sm rounded-4 p-3 bg-white mb-4">
+  <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+    <!-- Status Filter Pills -->
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{{ url_for('admin.orders', status='all') }}" class="btn btn-sm {% if current_status == 'all' %}btn-loozy-primary{% else %}btn-light border{% endif %} rounded-pill">
+        All
+      </a>
+      {% for s in statuses %}
+      <a href="{{ url_for('admin.orders', status=s) }}" class="btn btn-sm {% if current_status == s %}btn-loozy-primary{% else %}btn-light border{% endif %} rounded-pill">
+        {{ s }}
+      </a>
+      {% endfor %}
+    </div>
+
+    <!-- Search Form -->
+    <form method="GET" action="{{ url_for('admin.orders') }}" class="d-flex gap-2">
+      {% if current_status != 'all' %}
+      <input type="hidden" name="status" value="{{ current_status }}">
+      {% endif %}
+      <input type="text" name="q" class="form-control form-control-sm rounded-pill" placeholder="Order #, name, phone..." value="{{ search_query }}">
+      <button type="submit" class="btn btn-sm btn-loozy-outline rounded-pill">Search</button>
+    </form>
+  </div>
+</div>
+
+<!-- Orders Table -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+  <div class="table-responsive">
+    <table class="table align-middle table-hover mb-0">
+      <thead class="table-light small">
+        <tr>
+          <th>Order Number</th>
+          <th>Customer Details</th>
+          <th>Items Ordered</th>
+          <th>Payment</th>
+          <th>Total</th>
+          <th>Live Status</th>
+          <th class="text-end">Invoice</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ord in orders %}
+        <tr>
+          <td>
+            <a href="{{ url_for('admin.order_detail', order_id=ord.id) }}" class="fw-bold text-dark text-decoration-none">
+              #{{ ord.order_number }}
+            </a>
+            <div class="small text-muted">{{ ord.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+          </td>
+          <td>
+            <div class="fw-bold text-dark">{{ ord.customer_name }}</div>
+            <div class="small text-muted">{{ ord.customer_phone }}</div>
+            <div class="small text-secondary text-truncate" style="max-width: 200px;">{{ ord.delivery_address }}</div>
+          </td>
+          <td>
+            <div class="small">
+              {% for it in ord.items %}
+              <div>{{ it.product_name }} <span class="text-success fw-bold">× {{ it.quantity }}</span></div>
+              {% endfor %}
+            </div>
+          </td>
+          <td>
+            <div class="small fw-semibold text-dark">{{ ord.payment_method }}</div>
+            <span class="badge {% if ord.payment_status == 'Paid' %}bg-success{% else %}bg-warning text-dark{% endif %}" style="font-size: 0.7rem;">
+              {{ ord.payment_status }}
+            </span>
+          </td>
+          <td class="fw-bold text-success fs-6">
+            ₹{{ ord.total_amount }}
+          </td>
+          <td>
+            <form action="{{ url_for('admin.update_order_status', order_id=ord.id) }}" method="POST">
+              <select name="order_status" class="form-select form-select-sm rounded-pill fw-semibold {% if ord.order_status == 'Completed' %}border-success text-success{% elif ord.order_status == 'Cancelled' %}border-danger text-danger{% else %}border-warning text-dark{% endif %}" onchange="this.form.submit()">
+                {% for st in statuses %}
+                <option value="{{ st }}" {% if ord.order_status == st %}selected{% endif %}>{{ st }}</option>
+                {% endfor %}
+              </select>
+            </form>
+          </td>
+          <td class="text-end">
+            <a href="{{ url_for('admin.order_detail', order_id=ord.id) }}" class="btn btn-sm btn-light border" title="View & Print Invoice">
+              <i class="bi bi-file-earmark-text me-1"></i> View
+            </a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" class="text-center py-5 text-muted">
+            <div class="category-icon-circle mx-auto mb-2" style="width: 50px; height: 50px; font-size: 1.3rem;">
+              <i class="bi bi-inbox"></i>
+            </div>
+            No orders found for this status.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

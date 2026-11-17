@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}About Us – Our Story & Passion{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="py-5" style="background: linear-gradient(135deg, #F4FAF5 0%, #E8F5E9 100%); border-bottom: 1px solid var(--loozy-border);">
+  <div class="container text-center py-4">
+    <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: var(--loozy-primary-light); color: var(--loozy-dark); font-size: 0.85rem;">
+      THE LOOZY STORY
+    </span>
+    <h1 class="display-5 fw-bold mt-2">Crafting Freshness & Daily Smiles</h1>
+    <p class="text-muted mx-auto fs-5" style="max-width: 650px;">
+      Discover how a humble desire for 100% real fruit juices and gourmet bites evolved into your favorite hangout cafe.
+    </p>
+  </div>
+</div>
+
+<!-- Story Section -->
+<section class="py-5 bg-white">
+  <div class="container py-4">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="position-relative">
+          <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80" alt="LOOZY Cafe Ambience" class="img-fluid rounded-4 shadow-lg w-100" style="max-height: 440px; object-fit: cover;">
+          <div class="position-absolute bottom-0 start-0 m-3 p-3 bg-white rounded-4 shadow border d-flex align-items-center gap-3">
+            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+              <i class="bi bi-heart-fill fs-5"></i>
+            </div>
+            <div>
+              <div class="fw-bold text-dark">Born in 2024</div>
+              <div class="small text-muted">Bangalore's Happiest Cafe</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <span class="text-success fw-bold text-uppercase small">How It All Started</span>
+        <h2 class="fw-bold mt-1 mb-3">Freshness You Can Taste, Energy You Can Feel</h2>
+        <p class="text-secondary leading-relaxed">
+          <strong>LOOZY</strong> was born out of a simple observation: modern cafes were either offering overpriced designer drinks or street carts with uncertain hygiene. We believed foodies deserved better — genuine 100% natural cold-pressed juices, velvety Belgian shakes, and chef-crafted burgers at prices everyone could celebrate.
+        </p>
+        <p class="text-secondary leading-relaxed">
+          From sourcing sun-ripened Valencia oranges and farm-picked strawberries to handcrafting our brioche burger buns and herb marinades, every single item at LOOZY is prepared fresh upon order. No synthetic syrups, no shortcuts.
+        </p>
+        <div class="d-flex flex-wrap gap-4 pt-3">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+            <span class="fw-semibold">100% Cold-Pressed</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+            <span class="fw-semibold">Zero Preservatives</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+            <span class="fw-semibold">Eco-Friendly Packaging</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5" style="background-color: var(--loozy-primary-soft); border-top: 1px solid var(--loozy-border); border-bottom: 1px solid var(--loozy-border);">
+  <div class="container py-3">
+    <div class="row g-4 text-center">
+      {% for stat in stats %}
+      <div class="col-6 col-md-3">
+        <div class="p-3">
+          <div class="display-5 fw-bolder text-success mb-1 brand-font">{{ stat.count }}</div>
+          <div class="fw-semibold text-secondary small">{{ stat.label }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Mission & Vision -->
+<section class="py-5 bg-white">
+  <div class="container py-4">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="p-4 p-lg-5 rounded-4 h-100 border" style="background-color: #F8FAF8;">
+          <div class="category-icon-circle mb-3">
+            <i class="bi bi-compass"></i>
+          </div>
+          <h3 class="fw-bold mb-3">Our Mission</h3>
+          <p class="text-secondary mb-0 leading-relaxed">
+            To provide joyful food and beverage experiences that energize people's everyday lives through uncompromised freshness, authentic ingredients, cheerful spaces, and unbeatable value for money.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-4 p-lg-5 rounded-4 h-100 border" style="background-color: var(--loozy-primary-light);">
+          <div class="category-icon-circle mb-3 bg-white text-success">
+            <i class="bi bi-eye"></i>
+          </div>
+          <h3 class="fw-bold text-success mb-3">Our Vision</h3>
+          <p class="text-secondary mb-0 leading-relaxed">
+            To build India's most beloved youth cafe brand where healthy natural refreshments and craveable gourmet comfort food coexist seamlessly, served with warmth in every neighborhood.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why Choose LOOZY / Core Values -->
+<section class="py-5" style="background-color: var(--loozy-body-bg);">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <span class="badge px-3 py-2 rounded-pill fw-bold" style="background-color: var(--loozy-primary-light); color: var(--loozy-dark); font-size: 0.85rem;">
+        THE LOOZY PROMISE
+      </span>
+      <h2 class="display-6 fw-bold mt-2">Why Customers Choose Us</h2>
+      <p class="text-muted mx-auto" style="max-width: 550px;">
+        Every cup, burger, and roll carries our commitment to excellence, transparency, and happiness.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      {% for val in values %}
+      <div class="col-md-6 col-lg-3">
+        <div class="p-4 bg-white rounded-4 border h-100 shadow-sm text-center">
+          <div class="category-icon-circle mx-auto mb-3" style="width: 65px; height: 65px;">
+            <i class="bi {{ val.icon }}"></i>
+          </div>
+          <h5 class="fw-bold mb-2">{{ val.title }}</h5>
+          <p class="small text-muted mb-0 leading-relaxed">{{ val.desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center mt-5">
+      <a href="{{ url_for('products.menu') }}" class="btn btn-loozy-primary px-5 py-3 fs-6">
+        Explore Our Fresh Menu <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}
